@@ -1,0 +1,1 @@
+<input {!! $attributes->merge(['class' => 'mb-3 bg-gray-200 p-2 w-full']) !!}>
