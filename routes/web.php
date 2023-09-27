@@ -73,50 +73,15 @@ Route::middleware(['auth', 'verified', 'is_admin'])->prefix('admin')->group(func
     Route::get('dashboard/search', [DashboardController::class, 'search'])->name('dashboard.search');
 });
 
-
-Route::get('/forgot-password', function () {
-    return view('auth.forgot-password');
-})->middleware('guest')->name('password.request');
+Route::get('/post/{post:slug}', [PostController::class, 'show'])->name('post.read');
+Route::delete('/post/{post:slug}/delete', [PostController::class, 'destroy'])->name('post.delete');
 
 
-Route::post('/forgot-password', function (Request $request) {
-    $request->validate(['email' => 'required|email']);
+Route::get('/forgot-password',[ForgotController::class,'index'])->middleware('guest')->name('password.request');
+
+ Route::post('/forgot-password',[ForgotController::class,'store'])->middleware('guest')->name('password.email');
+
  
-    $status = Password::sendResetLink(
-        $request->only('email')
-    );
- 
-    return $status === Password::RESET_LINK_SENT
-                ? back()->with(['success' => __($status)])
-                : back()->withErrors(['email' => __($status)]);
-})->middleware('guest')->name('password.email');
-
-Route::get('/reset-password/{token}', function (string $token) {
-    return view('auth.reset-password', ['token' => $token]);
-})->middleware('guest')->name('password.reset');
-
-
-Route::post('/reset-password', function (Request $request) {
-    $request->validate([
-        'token' => 'required',
-        'email' => 'required|email',
-        'password' => 'required|min:6|confirmed',
-    ]);
- 
-    $status = Password::reset(
-        $request->only('email', 'password', 'password_confirmation', 'token'),
-        function (User $user, string $password) {
-            $user->forceFill([
-                'password' => Hash::make($password)
-            ])->setRememberToken(Str::random(60));
-                
-            $user->save();
- 
-            event(new PasswordReset($user));
-        }
-    );
- 
-    return $status === Password::PASSWORD_RESET
-                ? redirect()->route('login')->with('success', __($status))
-                : back()->withErrors(['email' => [__($status)]]);
-})->middleware('guest')->name('password.update');
+ Route::get('/reset-password',[ResetController::class,'index'])->name('reset.password');
+ Route::get('/reset-password/{token}',[ResetController::class,'store'])->middleware('guest')->name('password.reset');
+ Route::post('/reset-password',[ResetController::class,'token'])->middleware('guest')->name('password.update');

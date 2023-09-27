@@ -41,4 +41,17 @@ class PostController extends Controller
 
         return back()->with('success', 'Post has been created!');
     }
+
+
+    public function show(Post $post){
+        return view('read-post', [
+            'post' => $post
+        ]);
+    }
+
+    public function destroy(Post $post){
+        $this->authorize('delete', $post);
+        $post->delete();
+        return back();
+    }
 }

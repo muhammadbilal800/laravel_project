@@ -25,5 +25,29 @@
             
             <button class="py-2 px-4 bg-indigo-600 rounded-lg text-white font-semibold">Post</button>
         </form>
+
+        @if (count($posts))
+            <h2>You have total of {{ count($posts) }} {{ Str::plural('post', count($posts)) }}</h2>
+            @foreach ($posts as $item)
+                <div class="bg-gray-200 p-3 rounded-lg mb-3 relative">
+                    @if($item->image) <img class="mb-3" src="{{ asset('/storage/'. $item->image) }}" alt=""> @endif
+                    <h1 class="mb-2">{{ $item->title }}</h1>        
+                    <p>{{ $item->content }}</p>
+                    <form action="{{ route('post.delete', $item->slug) }}" class="absolute -top-4 right-3" method="post">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="bg-red-500 py-1 px-2 text-[10px] rounded-lg">Delete</button>
+                    </form>
+                </div>
+            @endforeach
+        @else
+            <p>No data exist!</p>
+        @endif
+
+        @if($posts->hasPages())
+            <div class="bg-gray-100 p-3 rounded-lg">
+                {{ $posts->links() }}
+            </div>
+        @endif
     </div>
 @endsection
