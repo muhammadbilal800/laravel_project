@@ -38,6 +38,9 @@
                         @method('DELETE')
                         <button type="submit" class="bg-red-500 py-1 px-2 text-[10px] rounded-lg">Delete</button>
                     </form>
+                    @if ($item->user->id == Auth()->user()->id)
+                      <a class="text-blue-600 underline" href="{{ route('post.update',$item->slug) }}">Edit</a>  
+                    @endif
                 </div>
             @endforeach
         @else

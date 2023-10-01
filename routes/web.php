@@ -72,9 +72,12 @@ Route::middleware(['auth', 'verified', 'is_admin'])->prefix('admin')->group(func
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('dashboard/search', [DashboardController::class, 'search'])->name('dashboard.search');
 });
-
+// route model binding
 Route::get('/post/{post:slug}', [PostController::class, 'show'])->name('post.read');
 Route::delete('/post/{post:slug}/delete', [PostController::class, 'destroy'])->name('post.delete');
+// update post
+Route::get('/post/update/{post:slug}', [PostController::class, 'update'])->name('post.update')->middleware('auth');
+Route::patch('/post/update/{post:slug}/now', [PostController::class, 'update_post'])->name('post.update.now')->middleware('auth');
 
 
 Route::get('/forgot-password',[ForgotController::class,'index'])->middleware('guest')->name('password.request');
